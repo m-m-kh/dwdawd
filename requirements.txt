@@ -1,0 +1,13 @@
+aiogoogle 
+sanic 
+telethon
+aiofiles
+motor
+cryptography
+pymongo
+httpx
+tqdm
+python-socks[asyncio]
+python-dotenv
+redis
+apscheduler

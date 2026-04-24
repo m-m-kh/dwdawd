@@ -1,0 +1,7 @@
+config
+!config/web.json
+__pycache__
+.idea/
+debug/db
+debug/redis
+*.session*

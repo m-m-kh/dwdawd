@@ -1,0 +1,73 @@
+services:
+  main:
+    build:
+      context: .
+    image:
+      drivefile
+    volumes:
+      - ./:/app
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    restart: always
+    command : ["python","main.py"]
+    networks:
+      - mynet
+
+  auth:
+    build:
+      context: .
+    image:
+      drivefile
+    volumes:
+      - ./:/app
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    restart: always
+    command : ["python","auth.py"]
+    networks:
+      - mynet
+
+  mongo:
+    image:
+      mongo
+    volumes:
+      - ./config/db:/data/db
+    ports:
+      - 27017:27017
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "-u", "admin", "-p", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mynet
+    
+
+  mongo-express:
+    image:
+      mongo-express
+    ports:
+      - 8081:8081
+    depends_on:
+      mongo:
+        condition: service_healthy
+        
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - mynet
+
+
+
+
+networks:
+  mynet:
+    driver: bridge
