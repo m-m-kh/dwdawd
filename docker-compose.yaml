@@ -12,8 +12,6 @@ services:
       - .env
     restart: always
     command : ["python","main.py"]
-    networks:
-      - mynet
 
   auth:
     build:
@@ -28,8 +26,6 @@ services:
       - .env
     restart: always
     command : ["python","auth.py"]
-    networks:
-      - mynet
 
   mongo:
     image:
@@ -41,33 +37,24 @@ services:
     env_file:
       - .env
     restart: always
-    healthcheck:
-      test: ["CMD", "mongosh", "-u", "admin", "-p", "admin", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - mynet
-    
+
 
   mongo-express:
     image:
       mongo-express
     ports:
       - 8081:8081
-    depends_on:
-      mongo:
-        condition: service_healthy
-        
     env_file:
       - .env
     restart: always
-    networks:
-      - mynet
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
 
 
 
-
-networks:
-  mynet:
-    driver: bridge
